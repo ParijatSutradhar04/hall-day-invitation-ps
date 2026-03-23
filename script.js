@@ -88,20 +88,18 @@ function initMapScroll() {
 
     const totalLength = routePath.getTotalLength();
 
-    // SVG full dimensions
+    // SVG full dimensions (vertically stretched for gradual reveal)
     const svgFullWidth = 700;
-    const svgFullHeight = 900;
+    const svgFullHeight = 2100;
 
-    // Responsive viewBox — on mobile, show less of the map at once
-    // so the scroll-panning effect is dramatic and gradual
+    // Responsive viewBox — with the taller SVG, default 'meet' mode works
+    // perfectly: full width fits the screen, only a portion of height visible
     const isMobile = window.innerWidth <= 600;
-    const viewH = isMobile ? 280 : 420;
-    const viewW = isMobile ? 500 : svgFullWidth;
-    // On mobile, offset X to keep the route centered
-    const viewX = isMobile ? 100 : 0;
+    const viewH = isMobile ? 1200 : 1050;
+    const viewW = svgFullWidth;
 
     // Set initial viewBox to show the bottom (Entrance area)
-    svg.setAttribute('viewBox', `${viewX} ${svgFullHeight - viewH} ${viewW} ${viewH}`);
+    svg.setAttribute('viewBox', `0 ${svgFullHeight - viewH} ${viewW} ${viewH}`);
 
     // Set initial trail to hidden
     if (trailPath) {
@@ -128,14 +126,7 @@ function initMapScroll() {
         let viewY = point.y - viewH / 2;
         // Clamp so we don't go outside the SVG
         viewY = Math.max(0, Math.min(svgFullHeight - viewH, viewY));
-
-        // On mobile, also track dot horizontally to keep it centered in the narrower view
-        let vx = viewX;
-        if (isMobile) {
-            vx = point.x - viewW / 2;
-            vx = Math.max(0, Math.min(svgFullWidth - viewW, vx));
-        }
-        svg.setAttribute('viewBox', `${vx} ${viewY} ${viewW} ${viewH}`);
+        svg.setAttribute('viewBox', `0 ${viewY} ${viewW} ${viewH}`);
 
         // ── POSITION THE DOT ──
         redDot.setAttribute('cx', point.x);
